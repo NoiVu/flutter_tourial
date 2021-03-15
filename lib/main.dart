@@ -40,9 +40,27 @@ class MyHomePage extends StatelessWidget {
 class ButtonsContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final state = useProvider(buttonProvider);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[PauseButton(), SizedBox(width: 20), ResetButton()],
+      children: <Widget>[
+        if (state == ButtonState.initial) ...[
+          StartButton(),
+        ],
+        if (state == ButtonState.started) ...[
+          PauseButton(),
+          SizedBox(width: 20),
+          ResetButton()
+        ],
+        if (state == ButtonState.paused) ...[
+          StartButton(),
+          SizedBox(width: 20),
+          ResetButton()
+        ],
+        if (state == ButtonState.finished) ...[
+          ResetButton(),
+        ]
+      ],
     );
   }
 }
@@ -51,7 +69,9 @@ class ResetButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
-      onPressed: () {},
+      onPressed: () {
+        context.read(timerProvider).reset();
+      },
       child: Icon(Icons.replay),
     );
   }
@@ -61,7 +81,9 @@ class PauseButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
-      onPressed: () {},
+      onPressed: () {
+        context.read(timerProvider).pause();
+      },
       child: Icon(Icons.pause),
     );
   }
@@ -71,19 +93,21 @@ class StartButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
-      onPressed: () {},
+      onPressed: () {
+        context.read(timerProvider).start();
+      },
       child: Icon(Icons.play_arrow),
     );
   }
 }
 
-class TimerTextWidget extends StatelessWidget {
+class TimerTextWidget extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final timeLeft = useProvider(timeLeftProvider);
     return Text(
       timeLeft,
-      style: Theme.of(context).textTheme.headline1,
+      style: Theme.of(context).textTheme.headline2,
     );
   }
 }
@@ -107,5 +131,3 @@ final _buttonState = Provider<ButtonState>((ref) {
 final buttonProvider = Provider<ButtonState>((ref) {
   return ref.watch(_buttonState);
 });
-
-
