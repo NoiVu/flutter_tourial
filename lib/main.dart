@@ -4,7 +4,9 @@ import 'package:flutter_riverpod_tutorial/timer.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    ProviderScope(child: MyApp()),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -37,7 +39,7 @@ class MyHomePage extends StatelessWidget {
   }
 }
 
-class ButtonsContainer extends StatelessWidget {
+class ButtonsContainer extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final state = useProvider(buttonProvider);
@@ -112,9 +114,8 @@ class TimerTextWidget extends HookWidget {
   }
 }
 
-final timerProvider = StateNotifierProvider<TimerNotifier>((ref) {
-  return TimerNotifier();
-});
+final timerProvider =
+    StateNotifierProvider<TimerNotifier>((ref) => TimerNotifier());
 
 final _timeLeftProvider = Provider<String>((ref) {
   return ref.watch(timerProvider.state).timeLeft;
